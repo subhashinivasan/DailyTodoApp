@@ -1,0 +1,180 @@
+/* Simple reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Basic body styling */
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Header */
+header h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Input Area */
+.input-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Text Input */
+#new-todo-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* Date Input */
+#new-todo-date {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    flex-basis: 150px; /* Or a specific width */
+    margin-left: 10px;
+}
+
+/* Add Button */
+#add-todo-btn {
+    padding: 10px 15px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+    transition: background-color 0.2s ease;
+}
+
+#add-todo-btn:hover {
+    background-color: #4cae4c;
+}
+
+/* Todo List */
+#todo-list {
+    list-style-type: none;
+    padding: 0;
+    overflow: hidden; /* Contains padding/margin changes from animations */
+}
+
+/* Todo Item */
+.todo-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s ease;
+}
+
+.todo-item:hover {
+    background-color: #f9f9f9;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.todo-item.new {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+        height: 0px;
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        border-width: 0; /* Ensure border collapses */
+    }
+}
+
+.todo-item.removing {
+    animation: fadeOut 0.3s ease-in forwards;
+}
+
+
+/* Todo Item Text */
+.todo-item span { /* Assuming text is in a span, adjust if different */
+    flex-grow: 1;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+/* Todo Item Completed State */
+.todo-item.completed span, /* If class is on li */
+.todo-item span.completed { /* If class is on span */
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+/* Todo Date Display */
+.todo-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-left: 15px;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+    background-color: #c9302c;
+}
+
+/* Calendar Area */
+.calendar-area {
+    padding: 20px;
+    margin-top: 30px;
+    text-align: center;
+    color: #777;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
