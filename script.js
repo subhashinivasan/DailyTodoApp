@@ -1,3 +1,4 @@
+// Daily Todo App - DOM wiring, UI updates, and localStorage persistence
 // DOM Element References
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
@@ -5,6 +6,8 @@ const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
 
 // addTodo Function
+// Creates a todo list item with checkbox, text, optional due date, and delete button.
+// `completed` controls whether the todo starts in a completed state.
 function addTodo(text, date, completed = false) {
     const li = document.createElement('li');
     li.classList.add('todo-item');
@@ -69,9 +72,10 @@ addTodoBtn.addEventListener('click', () => {
 });
 
 // Event Listeners for Complete/Delete (Event Delegation)
+// Use event delegation so dynamically added items are handled with one listener.
 todoList.addEventListener('click', (event) => {
     const target = event.target;
-    const parentLi = target.closest('li.todo-item'); // Get the parent LI
+    const parentLi = target.closest('li.todo-item'); // Find the nearest todo list item
 
     if (!parentLi) return; // Click was not inside a todo item's relevant part
 
@@ -95,6 +99,7 @@ todoList.addEventListener('click', (event) => {
 });
 
 // Local Storage Implementation
+// Stored schema: [{ text: string, date: string, completed: boolean }, ...]
 function saveTodos() {
     const todos = [];
     const todoItems = todoList.querySelectorAll('li.todo-item');
@@ -127,6 +132,7 @@ function saveTodos() {
     localStorage.setItem('todos', JSON.stringify(todos));
 }
 
+// Read todos from storage and re-create DOM nodes on page load.
 function renderTodos() {
     const storedTodos = localStorage.getItem('todos');
     if (storedTodos) {
