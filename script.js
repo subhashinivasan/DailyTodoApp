@@ -4,8 +4,59 @@ const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
 
+const TODO_STORAGE_KEY = 'todos';
+
+function normalizeDate(value) {
+    if (typeof value !== 'string') {
+        return '';
+    }
+    const trimmed = value.trim();
+    if (trimmed === '') {
+        return '';
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+        return '';
+    }
+    const [year, month, day] = trimmed.split('-').map(Number);
+    const normalized = new Date(Date.UTC(year, month - 1, day));
+    if (
+        normalized.getUTCFullYear() !== year ||
+        normalized.getUTCMonth() !== month - 1 ||
+        normalized.getUTCDate() !== day
+    ) {
+        return '';
+    }
+    return trimmed;
+}
+
+function normalizeTodo(todo) {
+    if (!todo || typeof todo !== 'object') {
+        return null;
+    }
+    const text = typeof todo.text === 'string' ? todo.text.trim() : '';
+    if (text === '') {
+        return null;
+    }
+    const date = normalizeDate(todo.date);
+    const completed = Boolean(todo.completed);
+    return { text, date, completed };
+}
+
+function safeRemoveStoredTodos() {
+    try {
+        localStorage.removeItem(TODO_STORAGE_KEY);
+    } catch (error) {
+        console.warn('Unable to clear stored todos.', error);
+    }
+}
+
 // addTodo Function
 function addTodo(text, date, completed = false) {
+    const safeText = typeof text === 'string' ? text.trim() : '';
+    if (safeText === '') {
+        return;
+    }
+    const normalizedDate = normalizeDate(date);
     const li = document.createElement('li');
     li.classList.add('todo-item');
 
@@ -14,7 +65,7 @@ function addTodo(text, date, completed = false) {
     checkbox.checked = completed;
 
     const textSpan = document.createElement('span');
-    textSpan.textContent = text;
+    textSpan.textContent = safeText;
     if (completed) {
         textSpan.classList.add('completed'); // Apply completed style if needed
     }
@@ -22,9 +73,9 @@ function addTodo(text, date, completed = false) {
     const dateSpan = document.createElement('span');
     dateSpan.classList.add('todo-date'); // Add a class for easier selection
     let hasDate = false;
-    if (date && date.trim() !== '') { // Ensure date is not just whitespace
-        dateSpan.textContent = `Due: ${date}`;
-        dateSpan.dataset.date = date; // Store raw date in data attribute
+    if (normalizedDate) { // Ensure date is not just whitespace
+        dateSpan.textContent = `Due: ${normalizedDate}`;
+        dateSpan.dataset.date = normalizedDate; // Store raw date in data attribute
         // Styling for dateSpan will be handled by CSS class .todo-date
         hasDate = true;
     }
@@ -120,22 +171,51 @@ function saveTodos() {
             // }
         }
         const completed = checkbox ? checkbox.checked : false;
+        const normalizedDate = normalizeDate(date);
 
-        todos.push({ text, date, completed });
+        todos.push({ text, date: normalizedDate, completed });
     });
 
-    localStorage.setItem('todos', JSON.stringify(todos));
+    try {
+        localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(todos));
+    } catch (error) {
+        console.warn('Unable to save todos.', error);
+    }
 }
 
 function renderTodos() {
-    const storedTodos = localStorage.getItem('todos');
-    if (storedTodos) {
-        const todos = JSON.parse(storedTodos);
-        todos.forEach(todo => {
-            addTodo(todo.text, todo.date, todo.completed);
-        });
+    let storedTodos;
+    try {
+        storedTodos = localStorage.getItem(TODO_STORAGE_KEY);
+    } catch (error) {
+        console.warn('Unable to access stored todos.', error);
+        return;
     }
-    console.log("renderTodos called and processed.");
+    if (!storedTodos) {
+        return;
+    }
+    let todos;
+    try {
+        todos = JSON.parse(storedTodos);
+    } catch (error) {
+        console.warn('Stored todos are invalid JSON. Clearing.', error);
+        safeRemoveStoredTodos();
+        return;
+    }
+    if (!Array.isArray(todos)) {
+        console.warn('Stored todos are not a list. Clearing.');
+        safeRemoveStoredTodos();
+        return;
+    }
+    todos.forEach(todo => {
+        const normalized = normalizeTodo(todo);
+        if (normalized) {
+            addTodo(normalized.text, normalized.date, normalized.completed);
+        } else {
+            console.warn('Skipping invalid stored todo item.', todo);
+        }
+    });
+    console.log('renderTodos called and processed.');
 }
 
 // Initial Call
