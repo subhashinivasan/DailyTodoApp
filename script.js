@@ -171,9 +171,9 @@ function saveTodos() {
             // }
         }
         const completed = checkbox ? checkbox.checked : false;
-        date = normalizeDate(date);
+        const normalizedDate = normalizeDate(date);
 
-        todos.push({ text, date, completed });
+        todos.push({ text, date: normalizedDate, completed });
     });
 
     try {
@@ -211,6 +211,8 @@ function renderTodos() {
         const normalized = normalizeTodo(todo);
         if (normalized) {
             addTodo(normalized.text, normalized.date, normalized.completed);
+        } else {
+            console.warn('Skipping invalid stored todo item.', todo);
         }
     });
     console.log('renderTodos called and processed.');
