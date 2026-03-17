@@ -95,6 +95,7 @@ header h1 {
 }
 
 /* --- Animations --- */
+/* Keep animation durations in sync with script.js setTimeout values (300ms). */
 @keyframes fadeIn {
     from {
         opacity: 0;
