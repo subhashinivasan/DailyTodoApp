@@ -16,8 +16,22 @@ function isValidTodoDate(dateString) {
         return false;
     }
 
-    const parsedDate = new Date(`${trimmedDate}T00:00:00`);
-    return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === trimmedDate;
+    const [yearText, monthText, dayText] = trimmedDate.split('-');
+    const year = Number(yearText);
+    const month = Number(monthText);
+    const day = Number(dayText);
+
+    if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day)) {
+        return false;
+    }
+
+    const parsedDate = new Date(Date.UTC(year, month - 1, day));
+    return (
+        !Number.isNaN(parsedDate.getTime()) &&
+        parsedDate.getUTCFullYear() === year &&
+        parsedDate.getUTCMonth() === month - 1 &&
+        parsedDate.getUTCDate() === day
+    );
 }
 
 // Returns a safe date string for display and storage.
