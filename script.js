@@ -25,6 +25,10 @@ function isValidTodoDate(dateString) {
         return false;
     }
 
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        return false;
+    }
+
     const parsedDate = new Date(Date.UTC(year, month - 1, day));
     return (
         !Number.isNaN(parsedDate.getTime()) &&
