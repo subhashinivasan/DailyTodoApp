@@ -5,7 +5,7 @@ const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
 
 // addTodo Function
-function addTodo(text, date, completed = false) {
+function add Todo(text, date, completed = false) {
     const li = document.createElement('li');
     li.classList.add('todo-item');
 
