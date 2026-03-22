@@ -25,7 +25,8 @@ function isValidTodoDate(dateString) {
         return false;
     }
 
-    const parsedDate = new Date(Date.UTC(year, month - 1, day));
+    const parsedDate = new Date(Date.UTC(0, month - 1, day));
+    parsedDate.setUTCFullYear(year);
     return (
         !Number.isNaN(parsedDate.getTime()) &&
         parsedDate.getUTCFullYear() === year &&
