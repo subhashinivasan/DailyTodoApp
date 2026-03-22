@@ -5,7 +5,8 @@ const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
 
 
-function isValidTodo Date(dateString) {
+// Checks whether a todo date string is valid.
+function isValidTodoDate(dateString) {
     if (typeof dateString !== 'string' || dateString.trim() === '') {
         return false;
     }
@@ -21,22 +22,26 @@ function isValidTodo Date(dateString) {
 }
 
 
+// Returns a trimmed date string when it is valid.
 function normalizeTodoDate(dateString) {
     return isValidTodoDate(dateString) ? dateString.trim() : '';
 }
 
 
+// Removes the temporary highlight from a new todo item.
 function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
 
+// Deletes a todo item and persists the updated list.
 function removeTodoItem(todoItem) {
     todoItem.remove();
     saveTodos();
 }
 
 
+// Creates and appends a todo item to the list.
 function addTodo(text, date, completed = false) {
     const li = document.createElement('li');
     li.classList.add('todo-item');
@@ -82,6 +87,7 @@ function addTodo(text, date, completed = false) {
 }
 
 
+// Reads the current todo items from the DOM.
 function getTodosFromDom() {
     const todos = [];
     const todoItems = todoList.querySelectorAll('li.todo-item');
@@ -103,6 +109,7 @@ function getTodosFromDom() {
 }
 
 
+// Saves the current todo list to localStorage.
 function saveTodos() {
     const todos = getTodosFromDom();
 
@@ -115,6 +122,7 @@ function saveTodos() {
 }
 
 
+// Loads and validates saved todos from localStorage.
 function loadStoredTodos() {
     try {
         const storedTodos = localStorage.getItem('todos');
@@ -156,7 +164,7 @@ function loadStoredTodos() {
     }
 }
 
-// Renders all stored todos into the list on page load.
+// Renders saved todos into the list.
 function renderTodos() {
     const todos = loadStoredTodos();
 
@@ -165,7 +173,7 @@ function renderTodos() {
     }
 }
 
-// Handles adding a new todo from the input controls.
+// Adds a new todo from the input controls.
 function handleAddTodoClick() {
     const text = newTodoInput.value.trim();
     const date = newTodoDate.value;
@@ -190,7 +198,7 @@ function handleAddTodoClick() {
     newTodoInput.focus();
 }
 
-// Handles checkbox toggles and delete actions using event delegation.
+// Handles checkbox toggles and delete actions.
 function handleTodoListClick(event) {
     const target = event.target;
     const parentLi = target.closest('li.todo-item');
