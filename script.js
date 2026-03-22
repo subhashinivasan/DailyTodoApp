@@ -1,11 +1,11 @@
-// DOM Element References
+
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
 
-// Returns true when the provided value is a valid YYYY-MM-DD date string.
-function isValidTodoDate(dateString) {
+
+function isValidTodo Date(dateString) {
     if (typeof dateString !== 'string' || dateString.trim() === '') {
         return false;
     }
@@ -20,23 +20,23 @@ function isValidTodoDate(dateString) {
     return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === trimmedDate;
 }
 
-// Returns a safe date string for display and storage.
+
 function normalizeTodoDate(dateString) {
     return isValidTodoDate(dateString) ? dateString.trim() : '';
 }
 
-// Removes the temporary animation class after a new todo is rendered.
+
 function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
-// Removes a todo from the list after its exit animation completes.
+
 function removeTodoItem(todoItem) {
     todoItem.remove();
     saveTodos();
 }
 
-// Creates and appends a todo item to the list.
+
 function addTodo(text, date, completed = false) {
     const li = document.createElement('li');
     li.classList.add('todo-item');
@@ -81,7 +81,7 @@ function addTodo(text, date, completed = false) {
     setTimeout(removeNewTodoState, 300, li);
 }
 
-// Collects the current todo list into a serializable array.
+
 function getTodosFromDom() {
     const todos = [];
     const todoItems = todoList.querySelectorAll('li.todo-item');
@@ -102,7 +102,7 @@ function getTodosFromDom() {
     return todos;
 }
 
-// Persists the current todo list to localStorage.
+
 function saveTodos() {
     const todos = getTodosFromDom();
 
@@ -114,7 +114,7 @@ function saveTodos() {
     }
 }
 
-// Loads and validates the stored todo list from localStorage.
+
 function loadStoredTodos() {
     try {
         const storedTodos = localStorage.getItem('todos');
