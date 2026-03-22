@@ -53,7 +53,7 @@ header h1 {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
-    flex-basis: 150px; /* Or a specific width */
+    flex-basis: 150px;
     margin-left: 10px;
 }
 
@@ -133,7 +133,7 @@ header h1 {
 
 
 /* Todo Item Text */
-.todo-item span { /* Assuming text is in a span, adjust if different */
+.todo-item span {
     flex-grow: 1;
     margin-left: 10px;
     margin-right: 10px;
