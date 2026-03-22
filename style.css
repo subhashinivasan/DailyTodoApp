@@ -5,11 +5,31 @@
     box-sizing: border-box;
 }
 
+/* CSS custom properties */
+:root {
+    --color-page-bg: #1a6bbf;
+    --color-container-bg: #fff;
+    --color-text-primary: #333;
+    --color-text-muted: #aaa;
+    --color-text-subtle: #666;
+    --color-text-placeholder: #777;
+    --color-border: #ddd;
+    --color-border-light: #eee;
+    --color-btn-add: #5cb85c;
+    --color-btn-add-hover: #4cae4c;
+    --color-btn-delete: #d9534f;
+    --color-btn-delete-hover: #c9302c;
+    --color-todo-hover-bg: #f9f9f9;
+    --color-shadow: rgba(0, 0, 0, 0.1);
+    --animation-duration: 0.3s;
+    --transition-duration: 0.2s;
+}
+
 /* Basic body styling */
 body {
     font-family: sans-serif;
-    background-color: #1a6bbf;
-    color: #333;
+    background-color: var(--color-page-bg);
+    color: var(--color-text-primary);
     line-height: 1.6;
 }
 
@@ -18,15 +38,15 @@ body {
     max-width: 800px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-container-bg);
+    box-shadow: 0 0 10px var(--color-shadow);
     border-radius: 8px;
 }
 
 /* Header */
 header h1 {
     text-align: center;
-    color: #333;
+    color: var(--color-text-primary);
     margin-bottom: 20px;
 }
 
@@ -42,7 +62,7 @@ header h1 {
 #new-todo-input {
     flex-grow: 1;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 16px;
 }
@@ -50,7 +70,7 @@ header h1 {
 /* Date Input */
 #new-todo-date {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 16px;
     flex-basis: 150px;
@@ -60,18 +80,18 @@ header h1 {
 /* Add Button */
 #add-todo-btn {
     padding: 10px 15px;
-    background-color: #5cb85c;
+    background-color: var(--color-btn-add);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
     margin-left: 10px;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-duration) ease;
 }
 
 #add-todo-btn:hover {
-    background-color: #4cae4c;
+    background-color: var(--color-btn-add-hover);
 }
 
 /* Todo List */
@@ -86,12 +106,12 @@ header h1 {
     display: flex;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s ease;
+    border-bottom: 1px solid var(--color-border-light);
+    transition: background-color var(--transition-duration) ease;
 }
 
 .todo-item:hover {
-    background-color: #f9f9f9;
+    background-color: var(--color-todo-hover-bg);
 }
 
 /* --- Animations --- */
@@ -107,7 +127,7 @@ header h1 {
 }
 
 .todo-item.new {
-    animation: fadeIn 0.3s ease-out;
+    animation: fadeIn var(--animation-duration) ease-out;
 }
 
 @keyframes fadeOut {
@@ -128,7 +148,7 @@ header h1 {
 }
 
 .todo-item.removing {
-    animation: fadeOut 0.3s ease-in forwards;
+    animation: fadeOut var(--animation-duration) ease-in forwards;
 }
 
 
@@ -143,29 +163,29 @@ header h1 {
 .todo-item.completed span, /* If class is on li */
 .todo-item span.completed { /* If class is on span */
     text-decoration: line-through;
-    color: #aaa;
+    color: var(--color-text-muted);
 }
 
 /* Todo Date Display */
 .todo-date {
     font-size: 0.9em;
-    color: #666;
+    color: var(--color-text-subtle);
     margin-left: 15px;
 }
 
 /* Delete Button */
 .delete-btn {
-    background-color: #d9534f;
+    background-color: var(--color-btn-delete);
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color var(--transition-duration) ease;
 }
 
 .delete-btn:hover {
-    background-color: #c9302c;
+    background-color: var(--color-btn-delete-hover);
 }
 
 /* Calendar Area */
@@ -173,8 +193,8 @@ header h1 {
     padding: 20px;
     margin-top: 30px;
     text-align: center;
-    color: #777;
-    background-color: #f9f9f9;
-    border: 1px solid #eee;
+    color: var(--color-text-placeholder);
+    background-color: var(--color-todo-hover-bg);
+    border: 1px solid var(--color-border-light);
     border-radius: 4px;
 }
