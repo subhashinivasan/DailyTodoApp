@@ -5,7 +5,7 @@ const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
 
 // Returns true when the provided value is a valid YYYY-MM-DD date string.
-function isValidTodoDate(dateString) {
+function isValidTodo Date(dateString) {
     if (typeof dateString !== 'string' || dateString.trim() === '') {
         return false;
     }
