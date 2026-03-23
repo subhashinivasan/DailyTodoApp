@@ -1,4 +1,5 @@
 
+// DOM element references cached at startup to avoid repeated lookups.
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
@@ -6,17 +7,22 @@ const todoList = document.getElementById('todo-list');
 
 
 // Checks whether a todo date string is valid.
+// The date must be a non-empty string in YYYY-MM-DD format and represent a
+// calendar date that the JavaScript Date constructor accepts without rollover
+// (e.g. "2024-02-30" is rejected even though it matches the regex).
 function isValidTodoDate(dateString) {
     if (typeof dateString !== 'string' || dateString.trim() === '') {
         return false;
     }
 
     const trimmedDate = dateString.trim();
+    // Reject anything that does not strictly match YYYY-MM-DD.
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     if (!datePattern.test(trimmedDate)) {
         return false;
     }
 
+    // Use a fixed midnight UTC time so the ISO string round-trip is reliable.
     const parsedDate = new Date(`${trimmedDate}T00:00:00`);
     return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === trimmedDate;
 }
@@ -42,7 +48,9 @@ function removeTodoItem(todoItem) {
 
 
 // Creates and appends a todo item to the list.
-function addTodo(text, date, completed = false) {
+// Pass animate=false when restoring saved todos so they appear instantly
+// without triggering the "new item" fade-in animation.
+function addTodo(text, date, completed = false, animate = true) {
     const li = document.createElement('li');
     li.classList.add('todo-item');
 
@@ -66,6 +74,7 @@ function addTodo(text, date, completed = false) {
         dateSpan = document.createElement('span');
         dateSpan.classList.add('todo-date');
         dateSpan.textContent = `Due: ${normalizedDate}`;
+        // Store the raw date value in a data attribute for reliable DOM reads.
         dateSpan.dataset.date = normalizedDate;
     }
 
@@ -82,8 +91,12 @@ function addTodo(text, date, completed = false) {
     li.appendChild(deleteBtn);
     todoList.appendChild(li);
 
-    li.classList.add('new');
-    setTimeout(removeNewTodoState, 300, li);
+    // Only play the slide-in animation for newly created items, not for items
+    // restored from localStorage on page load.
+    if (animate) {
+        li.classList.add('new');
+        setTimeout(removeNewTodoState, 300, li);
+    }
 }
 
 
@@ -165,11 +178,13 @@ function loadStoredTodos() {
 }
 
 // Renders saved todos into the list.
+// Todos loaded from storage are added without the entry animation so that the
+// page restores silently rather than replaying all animations on every load.
 function renderTodos() {
     const todos = loadStoredTodos();
 
     for (const todo of todos) {
-        addTodo(todo.text, todo.date, todo.completed);
+        addTodo(todo.text, todo.date, todo.completed, false);
     }
 }
 
@@ -198,7 +213,9 @@ function handleAddTodoClick() {
     newTodoInput.focus();
 }
 
-// Handles checkbox toggles and delete actions.
+// Handles checkbox toggles and delete actions via event delegation on the list.
+// Using a single listener on the parent <ul> avoids attaching per-item
+// listeners and keeps memory usage constant as items are added/removed.
 function handleTodoListClick(event) {
     const target = event.target;
     const parentLi = target.closest('li.todo-item');
@@ -221,9 +238,19 @@ function handleTodoListClick(event) {
     }
 }
 
+// Submits a new todo when the user presses Enter inside the text input,
+// mirroring the behaviour of clicking the Add button.
+function handleTodoInputKeydown(event) {
+    if (event.key === 'Enter') {
+        handleAddTodoClick();
+    }
+}
+
 // Wires up the app event listeners.
 function initializeTodoApp() {
     addTodoBtn.addEventListener('click', handleAddTodoClick);
+    // Allow pressing Enter in the text field as a shortcut for the Add button.
+    newTodoInput.addEventListener('keydown', handleTodoInputKeydown);
     todoList.addEventListener('click', handleTodoListClick);
     renderTodos();
 }
