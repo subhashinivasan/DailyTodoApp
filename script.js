@@ -57,7 +57,7 @@ function normalizeTodoDate(dateString) {
 
 
 // Removes the temporary highlight from a new todo item.
-function removeNewTodoState(todoItem) {
+function removeNewTodo State(todoItem) {
     todoItem.classList.remove('new');
 }
 
