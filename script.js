@@ -1,4 +1,7 @@
+// script.js - Main application logic for the Daily Todo App.
+// Handles todo creation, rendering, persistence (localStorage), and UI interactions.
 
+// Centralized UI copy – update this object to change any user-visible text in one place.
 const UI_TEXT = {
     pageTitle: 'My Todo List',
     heading: 'My Todo List',
@@ -15,6 +18,7 @@ const UI_TEXT = {
     }
 };
 
+// Cached DOM element references – queried once at startup for performance.
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
@@ -35,16 +39,19 @@ function applyUIText() {
 
 // Checks whether a todo date string is valid.
 function isValidTodoDate(dateString) {
+    // Reject non-string or blank values.
     if (typeof dateString !== 'string' || dateString.trim() === '') {
         return false;
     }
 
     const trimmedDate = dateString.trim();
+    // Enforce the YYYY-MM-DD format expected by the date input.
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     if (!datePattern.test(trimmedDate)) {
         return false;
     }
 
+    // Verify the date is a real calendar date (e.g. rejects 2024-02-30).
     const parsedDate = new Date(`${trimmedDate}T00:00:00`);
     return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === trimmedDate;
 }
@@ -57,7 +64,7 @@ function normalizeTodoDate(dateString) {
 
 
 // Removes the temporary highlight from a new todo item.
-function removeNewTodo State(todoItem) {
+function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
@@ -71,29 +78,35 @@ function removeTodoItem(todoItem) {
 
 // Creates and appends a todo item to the list.
 function addTodo(text, date, completed = false) {
+    // Build the list item container.
     const li = document.createElement('li');
     li.classList.add('todo-item');
 
+    // Checkbox reflects and toggles the completed state.
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = completed;
 
+    // Text span shows the todo description; strikethrough is applied when completed.
     const textSpan = document.createElement('span');
     textSpan.textContent = text;
     if (completed) {
         textSpan.classList.add('completed');
     }
 
+    // Validate and normalize the due date; warn and discard if invalid.
     const normalizedDate = normalizeTodoDate(date);
     if (date && normalizedDate === '') {
         console.warn(`Ignoring invalid todo date: ${date}`);
     }
 
+    // Only render the date span when a valid date was provided.
     let dateSpan = null;
     if (normalizedDate) {
         dateSpan = document.createElement('span');
         dateSpan.classList.add('todo-date');
         dateSpan.textContent = `${UI_TEXT.duePrefix} ${normalizedDate}`;
+        // Store the raw date as a data attribute for easy retrieval when saving.
         dateSpan.dataset.date = normalizedDate;
     }
 
@@ -101,6 +114,7 @@ function addTodo(text, date, completed = false) {
     deleteBtn.classList.add('delete-btn');
     deleteBtn.textContent = UI_TEXT.deleteButtonLabel;
 
+    // Assemble the list item elements.
     li.appendChild(checkbox);
     li.appendChild(textSpan);
     if (dateSpan) {
@@ -110,6 +124,7 @@ function addTodo(text, date, completed = false) {
     li.appendChild(deleteBtn);
     todoList.appendChild(li);
 
+    // Briefly highlight the new item, then remove the style after the animation.
     li.classList.add('new');
     setTimeout(removeNewTodoState, 300, li);
 }
@@ -154,15 +169,18 @@ function saveTodos() {
 function loadStoredTodos() {
     try {
         const storedTodos = localStorage.getItem('todos');
+        // Return early with an empty list when nothing has been saved yet.
         if (!storedTodos) {
             return [];
         }
 
         const parsedTodos = JSON.parse(storedTodos);
+        // Guard against corrupted storage that contains a non-array value.
         if (!Array.isArray(parsedTodos)) {
             throw new Error('Stored todos value is not an array.');
         }
 
+        // Filter out any malformed entries so one bad item doesn't break the whole list.
         const validTodos = [];
         for (const todo of parsedTodos) {
             if (!todo || typeof todo.text !== 'string') {
@@ -179,6 +197,7 @@ function loadStoredTodos() {
 
         return validTodos;
     } catch (error) {
+        // Alert the user and reset storage when the stored data cannot be parsed.
         console.error('Unable to load todos from localStorage.', error);
         alert(UI_TEXT.alerts.loadFailed);
 
@@ -229,12 +248,14 @@ function handleAddTodoClick() {
 // Handles checkbox toggles and delete actions.
 function handleTodoListClick(event) {
     const target = event.target;
+    // Ignore clicks that land outside a todo list item.
     const parentLi = target.closest('li.todo-item');
 
     if (!parentLi) {
         return;
     }
 
+    // Toggle the completed style and persist when a checkbox is clicked.
     if (target.type === 'checkbox') {
         const textSpan = parentLi.querySelector('span:not(.todo-date)');
         if (textSpan) {
@@ -243,6 +264,7 @@ function handleTodoListClick(event) {
         saveTodos();
     }
 
+    // Trigger the removal animation and delete the item when the delete button is clicked.
     if (target.classList.contains('delete-btn')) {
         parentLi.classList.add('removing');
         setTimeout(removeTodoItem, 300, parentLi);
