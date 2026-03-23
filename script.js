@@ -1,4 +1,5 @@
 
+// Centralized UI text strings used throughout the app.
 const UI_TEXT = {
     pageTitle: 'My Todo List',
     heading: 'My Todo List',
@@ -15,6 +16,7 @@ const UI_TEXT = {
     }
 };
 
+// DOM element references used by the app.
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
@@ -35,16 +37,19 @@ function applyUIText() {
 
 // Checks whether a todo date string is valid.
 function isValidTodoDate(dateString) {
+    // Reject non-strings and blank values.
     if (typeof dateString !== 'string' || dateString.trim() === '') {
         return false;
     }
 
     const trimmedDate = dateString.trim();
+    // Ensure the date matches the YYYY-MM-DD format.
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     if (!datePattern.test(trimmedDate)) {
         return false;
     }
 
+    // Verify the date is a real calendar date (e.g. not 2024-02-30).
     const parsedDate = new Date(`${trimmedDate}T00:00:00`);
     return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === trimmedDate;
 }
@@ -57,7 +62,7 @@ function normalizeTodoDate(dateString) {
 
 
 // Removes the temporary highlight from a new todo item.
-function removeNewTodo State(todoItem) {
+function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
@@ -74,21 +79,25 @@ function addTodo(text, date, completed = false) {
     const li = document.createElement('li');
     li.classList.add('todo-item');
 
+    // Create the checkbox for marking the todo as complete.
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = completed;
 
+    // Create the text label, applying the completed style if needed.
     const textSpan = document.createElement('span');
     textSpan.textContent = text;
     if (completed) {
         textSpan.classList.add('completed');
     }
 
+    // Validate and normalize the due date; warn and ignore if invalid.
     const normalizedDate = normalizeTodoDate(date);
     if (date && normalizedDate === '') {
         console.warn(`Ignoring invalid todo date: ${date}`);
     }
 
+    // Create a due-date label only when a valid date is provided.
     let dateSpan = null;
     if (normalizedDate) {
         dateSpan = document.createElement('span');
@@ -97,10 +106,12 @@ function addTodo(text, date, completed = false) {
         dateSpan.dataset.date = normalizedDate;
     }
 
+    // Create the delete button for removing the todo.
     const deleteBtn = document.createElement('button');
     deleteBtn.classList.add('delete-btn');
     deleteBtn.textContent = UI_TEXT.deleteButtonLabel;
 
+    // Assemble the todo item and add it to the list.
     li.appendChild(checkbox);
     li.appendChild(textSpan);
     if (dateSpan) {
@@ -110,6 +121,7 @@ function addTodo(text, date, completed = false) {
     li.appendChild(deleteBtn);
     todoList.appendChild(li);
 
+    // Briefly highlight the new item, then remove the highlight.
     li.classList.add('new');
     setTimeout(removeNewTodoState, 300, li);
 }
@@ -154,15 +166,18 @@ function saveTodos() {
 function loadStoredTodos() {
     try {
         const storedTodos = localStorage.getItem('todos');
+        // Return an empty list when nothing has been saved yet.
         if (!storedTodos) {
             return [];
         }
 
         const parsedTodos = JSON.parse(storedTodos);
+        // Ensure the stored value is an array before iterating.
         if (!Array.isArray(parsedTodos)) {
             throw new Error('Stored todos value is not an array.');
         }
 
+        // Filter out any malformed items and normalize valid ones.
         const validTodos = [];
         for (const todo of parsedTodos) {
             if (!todo || typeof todo.text !== 'string') {
@@ -182,6 +197,7 @@ function loadStoredTodos() {
         console.error('Unable to load todos from localStorage.', error);
         alert(UI_TEXT.alerts.loadFailed);
 
+        // Clear the corrupted data so the app starts fresh on next load.
         try {
             localStorage.removeItem('todos');
         } catch (removeError) {
@@ -229,12 +245,14 @@ function handleAddTodoClick() {
 // Handles checkbox toggles and delete actions.
 function handleTodoListClick(event) {
     const target = event.target;
+    // Find the closest todo list item ancestor of the clicked element.
     const parentLi = target.closest('li.todo-item');
 
     if (!parentLi) {
         return;
     }
 
+    // Toggle the completed style when the checkbox is clicked.
     if (target.type === 'checkbox') {
         const textSpan = parentLi.querySelector('span:not(.todo-date)');
         if (textSpan) {
@@ -243,6 +261,7 @@ function handleTodoListClick(event) {
         saveTodos();
     }
 
+    // Animate the item out and then remove it when the delete button is clicked.
     if (target.classList.contains('delete-btn')) {
         parentLi.classList.add('removing');
         setTimeout(removeTodoItem, 300, parentLi);
