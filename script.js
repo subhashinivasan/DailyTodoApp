@@ -15,7 +15,7 @@ const UI_TEXT = {
     }
 };
 
-const newTodoInput = document.getElementById('new-todo-input');
+const newTodo Input = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
