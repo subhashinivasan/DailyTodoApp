@@ -1,8 +1,36 @@
 
+const UI_TEXT = {
+    pageTitle: 'My Todo List',
+    heading: 'My Todo List',
+    newTodoPlaceholder: 'Add a new todo...',
+    addButtonLabel: 'Add',
+    calendarHelper: 'Future home for a calendar view or date-based filtering. Use the date input above to set due dates for todos.',
+    duePrefix: 'Due:',
+    deleteButtonLabel: 'Delete',
+    alerts: {
+        saveFailed: 'Your todos could not be saved. Please check browser storage settings and try again.',
+        loadFailed: 'Saved todos could not be loaded because the stored data is invalid. The list will start empty.',
+        emptyTodo: 'Please enter a todo description.',
+        invalidDate: 'Please choose a valid due date.'
+    }
+};
+
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
 const todoList = document.getElementById('todo-list');
+const appHeading = document.getElementById('app-heading');
+const calendarHelper = document.getElementById('calendar-helper');
+
+
+// Applies the centralized UI copy to the page.
+function applyUIText() {
+    document.title = UI_TEXT.pageTitle;
+    appHeading.textContent = UI_TEXT.heading;
+    newTodoInput.placeholder = UI_TEXT.newTodoPlaceholder;
+    addTodoBtn.textContent = UI_TEXT.addButtonLabel;
+    calendarHelper.textContent = UI_TEXT.calendarHelper;
+}
 
 
 // Checks whether a todo date string is valid.
@@ -65,13 +93,13 @@ function addTodo(text, date, completed = false) {
     if (normalizedDate) {
         dateSpan = document.createElement('span');
         dateSpan.classList.add('todo-date');
-        dateSpan.textContent = `Due: ${normalizedDate}`;
+        dateSpan.textContent = `${UI_TEXT.duePrefix} ${normalizedDate}`;
         dateSpan.dataset.date = normalizedDate;
     }
 
     const deleteBtn = document.createElement('button');
     deleteBtn.classList.add('delete-btn');
-    deleteBtn.textContent = 'Delete';
+    deleteBtn.textContent = UI_TEXT.deleteButtonLabel;
 
     li.appendChild(checkbox);
     li.appendChild(textSpan);
@@ -117,7 +145,7 @@ function saveTodos() {
         localStorage.setItem('todos', JSON.stringify(todos));
     } catch (error) {
         console.error('Unable to save todos to localStorage.', error);
-        alert('Your todos could not be saved. Please check browser storage settings and try again.');
+        alert(UI_TEXT.alerts.saveFailed);
     }
 }
 
@@ -152,7 +180,7 @@ function loadStoredTodos() {
         return validTodos;
     } catch (error) {
         console.error('Unable to load todos from localStorage.', error);
-        alert('Saved todos could not be loaded because the stored data is invalid. The list will start empty.');
+        alert(UI_TEXT.alerts.loadFailed);
 
         try {
             localStorage.removeItem('todos');
@@ -179,13 +207,13 @@ function handleAddTodoClick() {
     const date = newTodoDate.value;
 
     if (text === '') {
-        alert('Please enter a todo description.');
+        alert(UI_TEXT.alerts.emptyTodo);
         newTodoInput.focus();
         return;
     }
 
     if (date && !isValidTodoDate(date)) {
-        alert('Please choose a valid due date.');
+        alert(UI_TEXT.alerts.invalidDate);
         newTodoDate.focus();
         return;
     }
@@ -223,6 +251,7 @@ function handleTodoListClick(event) {
 
 // Wires up the app event listeners.
 function initializeTodoApp() {
+    applyUIText();
     addTodoBtn.addEventListener('click', handleAddTodoClick);
     todoList.addEventListener('click', handleTodoListClick);
     renderTodos();
