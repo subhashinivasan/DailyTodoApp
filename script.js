@@ -1,4 +1,7 @@
 
+const STORAGE_KEY = 'todos';
+const ANIMATION_DURATION_MS = 300;
+
 const UI_TEXT = {
     pageTitle: 'My Todo List',
     heading: 'My Todo List',
@@ -57,7 +60,7 @@ function normalizeTodoDate(dateString) {
 
 
 // Removes the temporary highlight from a new todo item.
-function removeNewTodo State(todoItem) {
+function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
@@ -111,7 +114,7 @@ function addTodo(text, date, completed = false) {
     todoList.appendChild(li);
 
     li.classList.add('new');
-    setTimeout(removeNewTodoState, 300, li);
+    setTimeout(removeNewTodoState, ANIMATION_DURATION_MS, li);
 }
 
 
@@ -142,7 +145,7 @@ function saveTodos() {
     const todos = getTodosFromDom();
 
     try {
-        localStorage.setItem('todos', JSON.stringify(todos));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
     } catch (error) {
         console.error('Unable to save todos to localStorage.', error);
         alert(UI_TEXT.alerts.saveFailed);
@@ -153,7 +156,7 @@ function saveTodos() {
 // Loads and validates saved todos from localStorage.
 function loadStoredTodos() {
     try {
-        const storedTodos = localStorage.getItem('todos');
+        const storedTodos = localStorage.getItem(STORAGE_KEY);
         if (!storedTodos) {
             return [];
         }
@@ -183,7 +186,7 @@ function loadStoredTodos() {
         alert(UI_TEXT.alerts.loadFailed);
 
         try {
-            localStorage.removeItem('todos');
+            localStorage.removeItem(STORAGE_KEY);
         } catch (removeError) {
             console.error('Unable to clear invalid stored todos.', removeError);
         }
@@ -245,7 +248,7 @@ function handleTodoListClick(event) {
 
     if (target.classList.contains('delete-btn')) {
         parentLi.classList.add('removing');
-        setTimeout(removeTodoItem, 300, parentLi);
+        setTimeout(removeTodoItem, ANIMATION_DURATION_MS, parentLi);
     }
 }
 
