@@ -1,4 +1,5 @@
 
+// Centralized UI text strings used throughout the app.
 const UI_TEXT = {
     pageTitle: 'My Todo List',
     heading: 'My Todo List',
@@ -15,6 +16,7 @@ const UI_TEXT = {
     }
 };
 
+// DOM element references used throughout the app.
 const newTodoInput = document.getElementById('new-todo-input');
 const newTodoDate = document.getElementById('new-todo-date');
 const addTodoBtn = document.getElementById('add-todo-btn');
@@ -57,7 +59,7 @@ function normalizeTodoDate(dateString) {
 
 
 // Removes the temporary highlight from a new todo item.
-function removeNewTodo State(todoItem) {
+function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
