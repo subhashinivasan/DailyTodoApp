@@ -57,7 +57,7 @@ function normalizeTodoDate(dateString) {
 
 
 // Removes the temporary highlight from a new todo item.
-function removeNewTodo State(todoItem) {
+function removeNewTodoState(todoItem) {
     todoItem.classList.remove('new');
 }
 
@@ -192,6 +192,7 @@ function loadStoredTodos() {
     }
 }
 
+
 // Renders saved todos into the list.
 function renderTodos() {
     const todos = loadStoredTodos();
@@ -200,6 +201,7 @@ function renderTodos() {
         addTodo(todo.text, todo.date, todo.completed);
     }
 }
+
 
 // Adds a new todo from the input controls.
 function handleAddTodoClick() {
@@ -226,6 +228,7 @@ function handleAddTodoClick() {
     newTodoInput.focus();
 }
 
+
 // Handles checkbox toggles and delete actions.
 function handleTodoListClick(event) {
     const target = event.target;
@@ -249,6 +252,7 @@ function handleTodoListClick(event) {
     }
 }
 
+
 // Wires up the app event listeners.
 function initializeTodoApp() {
     applyUIText();
@@ -256,6 +260,7 @@ function initializeTodoApp() {
     todoList.addEventListener('click', handleTodoListClick);
     renderTodos();
 }
+
 
 // Starts the todo app once the script has loaded.
 initializeTodoApp();
