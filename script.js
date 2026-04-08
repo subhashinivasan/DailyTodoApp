@@ -45,8 +45,17 @@ function isValidTodoDate(dateString) {
         return false;
     }
 
-    const parsedDate = new Date(`${trimmedDate}T00:00:00`);
-    return !Number.isNaN(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === trimmedDate;
+    const [yearStr, monthStr, dayStr] = trimmedDate.split('-');
+    const year = parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10);
+    const day = parseInt(dayStr, 10);
+
+    // Use setUTCFullYear to avoid Date.UTC()'s 0–99 year coercion to 1900–1999.
+    const parsedDate = new Date(0);
+    parsedDate.setUTCFullYear(year, month - 1, day);
+    return parsedDate.getUTCFullYear() === year &&
+        parsedDate.getUTCMonth() === month - 1 &&
+        parsedDate.getUTCDate() === day;
 }
 
 
